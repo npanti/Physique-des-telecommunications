@@ -130,6 +130,8 @@ for PX = TX(1): -1: 0
            %On Vérifie si PX est dans l'interval définit dans le tableau
            if ( TX(2) <= mur(i,2) && TX(2) >= mur(i,4) ) || ( TX(2) <= mur(i,4) && TX(2) >= mur(i,2) )
                 fprintf('Gauche - intersection en x=%d y=%d pour le mur %d \n', PX, TX(2), i);
+                %On la position du premier point image
+                fprintf('Position du point image x=%d y=%d \n', PX-abs(PX-TX(1)), TX(2));
                
            end
         end
@@ -145,6 +147,7 @@ for PX = TX(1): +1: DIM(1)
            
            if ( TX(2) <= mur(i,2) && TX(2) >= mur(i,4) ) || ( TX(2) <= mur(i,4) && TX(2) >= mur(i,2) )
                 fprintf('Droite - intersection en x=%d y=%d pour le mur %d \n', PX, TX(2), i);
+                fprintf('Position du point image x=%d y=%d \n', PX+abs(PX-TX(1)), TX(2));
                
            end
         end
@@ -160,6 +163,7 @@ for PX = TX(2): +1: DIM(2)
            
            if ( TX(1) <= mur(i,1) && TX(1) >= mur(i,3) ) || ( TX(1) <= mur(i,3) && TX(1) >= mur(i,1) )
                 fprintf('Haut - intersection en x=%d y=%d pour le mur %d \n', PX, TX(1), i);
+                fprintf('Position du point image x=%d y=%d \n', PX+abs(PX-TX(2)), TX(1));
                
            end
         end
@@ -175,10 +179,11 @@ for PX = TX(2): -1: 0
            
            if ( TX(1) <= mur(i,1) && TX(1) >= mur(i,3) ) || ( TX(1) <= mur(i,3) && TX(1) >= mur(i,1) )
                 fprintf('Bas - intersection en x=%d y=%d pour le mur %d \n', PX, TX(1), i);
+                fprintf('Position du point image x=%d y=%d \n', PX-abs(PX-TX(2)), TX(1));
                
            end
         end
     end
 end
 %Affichage
-gui_project_ZC(mur, db_null, TX);
+%gui_project_ZC(mur, db_null, TX);
