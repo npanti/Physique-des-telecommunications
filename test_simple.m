@@ -2,14 +2,15 @@ clear;
 clc;
 
 %Récepteur et émeteur [x y]
-TX = [7 1];
+TX = [1 2];
 RX = [7 8];
 
-DIM = [10 10];
+DIM = [26 22];
+%DIM = [10 10];
 
 %Pièce simple (carrée)
-mur = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
-vec = [
+vec = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
+mur = [
     0 0 26 0;
     26 0 26 22;
     26 22 0 22;
@@ -109,81 +110,69 @@ db_null = [10 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 %Parcourir à gauche, à droite, de haut et d'en bas jusqu'à un mur ensuite
 %commencer le calcul des points images
 
+%On parcour de gauche à droite et de haut en bas à partir de TX
 
-%TO DO: faire un fonction qui vérifie si le points fait partie d'un mur ou
-%non
-
-
-%On part vers la gauche pour commencer
-[m, p] = size(mur);
-fprintf('%d \n', m);
-
-for PX = TX(1): -1: 0
+for Xp = TX(1) : +1 : DIM(1)
     
-    %On parcour les murs du tableau
-    for i=1: +1: m
-        
-        %On vérifie que le mur est bien perpendiculaire au sens de
-        %déplacement de PX
-        if mur(i,1) == mur(i,3) && mur(i,1) == PX
-           
-           %On Vérifie si PX est dans l'interval définit dans le tableau
-           if ( TX(2) <= mur(i,2) && TX(2) >= mur(i,4) ) || ( TX(2) <= mur(i,4) && TX(2) >= mur(i,2) )
-                fprintf('Gauche - intersection en x=%d y=%d pour le mur %d \n', PX, TX(2), i);
-                %On la position du premier point image
-                fprintf('Position du point image x=%d y=%d \n', PX-abs(PX-TX(1)), TX(2));
-               
-           end
+    Yp = TX(2);
+    %fprintf('[%d,%d]\n',Xp, Yp);
+    
+    for i=1: +1: size(mur,1)
+       
+        if isIntersectWall(mur(i,:),Xp,Yp)
+            fprintf('Droite - Intersection en [%d,%d]\n', Xp, Yp);
         end
+        
     end
+    
 end
 
-%On part vers la droite
-for PX = TX(1): +1: DIM(1)
+for Xp = TX(1) : -1 : 0
     
-    for i=1: +1: m
-        
-        if mur(i,1) == mur(i,3) && mur(i,3) == PX
-           
-           if ( TX(2) <= mur(i,2) && TX(2) >= mur(i,4) ) || ( TX(2) <= mur(i,4) && TX(2) >= mur(i,2) )
-                fprintf('Droite - intersection en x=%d y=%d pour le mur %d \n', PX, TX(2), i);
-                fprintf('Position du point image x=%d y=%d \n', PX+abs(PX-TX(1)), TX(2));
-               
-           end
+    Yp = TX(2);
+    %fprintf('[%d,%d]\n',Xp, Yp);
+    
+    for i=1: +1: size(mur,1)
+       
+        if isIntersectWall(mur(i,:),Xp,Yp)
+            fprintf('Gauche - Intersection en [%d,%d]\n', Xp, Yp);
         end
+        
     end
+    
 end
 
-%On part vers le haut
-for PX = TX(2): +1: DIM(2)
+for Yp = TX(2) : +1 : DIM(1)
     
-    for i=1: +1: m
-        
-        if mur(i,2) == mur(i,4) && mur(i,2) == PX
-           
-           if ( TX(1) <= mur(i,1) && TX(1) >= mur(i,3) ) || ( TX(1) <= mur(i,3) && TX(1) >= mur(i,1) )
-                fprintf('Haut - intersection en x=%d y=%d pour le mur %d \n', PX, TX(1), i);
-                fprintf('Position du point image x=%d y=%d \n', PX+abs(PX-TX(2)), TX(1));
-               
-           end
+    Xp = TX(1);
+    %fprintf('[%d,%d]\n',Xp, Yp);
+    
+    for i=1: +1: size(mur,1)
+       
+        if isIntersectWall(mur(i,:),Xp,Yp)
+            fprintf('Haut - Intersection en [%d,%d]\n', Xp, Yp);
         end
+        
     end
+    
 end
 
-%On part vers la bas
-for PX = TX(2): -1: 0
+for Yp = TX(2) : -1 : 0
     
-    for i=1: +1: m
+    Xp = TX(1);
+    %fprintf('[%d,%d]\n',Xp, Yp);
+    
+    for i=1: +1: size(mur,1)
         
-        if mur(i,2) == mur(i,4) && mur(i,2) == PX
-           
-           if ( TX(1) <= mur(i,1) && TX(1) >= mur(i,3) ) || ( TX(1) <= mur(i,3) && TX(1) >= mur(i,1) )
-                fprintf('Bas - intersection en x=%d y=%d pour le mur %d \n', PX, TX(1), i);
-                fprintf('Position du point image x=%d y=%d \n', PX-abs(PX-TX(2)), TX(1));
-               
-           end
+        if isIntersectWall(mur(i,:),Xp,Yp)
+            fprintf('Bas - Intersection en [%d,%d]\n', Xp, Yp);
         end
+
     end
+    
 end
+
+
+
 %Affichage
-%gui_project_ZC(mur, db_null, TX);
+gui_project_ZC(mur, db_null, TX);
