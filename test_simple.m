@@ -2,15 +2,15 @@ clear;
 clc;
 
 %Récepteur et émeteur [x y]
-TX = [1 2];
+TX = [2 3];
 RX = [7 8];
 
-DIM = [26 22];
-%DIM = [10 10];
+%DIM = [26 22];
+DIM = [10 10];
 
 %Pièce simple (carrée)
-vec = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
-mur = [
+mur = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
+vec = [
     0 0 26 0;
     26 0 26 22;
     26 22 0 22;
@@ -109,6 +109,12 @@ db_null = [10 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
 
 %Parcourir à gauche, à droite, de haut et d'en bas jusqu'à un mur ensuite
 %commencer le calcul des points images
+for a=1: +1: size(mur,1)
+   plot([mur(a,1) mur(a,3)],[mur(a,2) mur(a,4)]);
+   hold on;
+end
+
+plot([TX(1) RX(1)], [TX(2) RX(2)], '*r');
 
 %On parcour de gauche à droite et de haut en bas à partir de TX
 
@@ -121,6 +127,25 @@ for Xp = TX(1) : +1 : DIM(1)
        
         if isIntersectWall(mur(i,:),Xp,Yp)
             fprintf('Droite - Intersection en [%d,%d]\n', Xp, Yp);
+            
+            Pi_x = TX(1) + 2*abs(Xp - TX(1));
+            Pi_y = TX(2);
+            
+            x1 = mur(i,1);
+            y1 = mur(i,2);
+            dx1 = mur(i,3) - x1;
+            dy1 = mur(i,4) - y1;
+            
+            x2 = Pi_x;
+            y2 = Pi_y;
+            dx2 = RX(1) - x2;
+            dy2 = RX(2) - y2;
+            
+            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
+            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+            
+            plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
+            
         end
         
     end
@@ -136,6 +161,24 @@ for Xp = TX(1) : -1 : 0
        
         if isIntersectWall(mur(i,:),Xp,Yp)
             fprintf('Gauche - Intersection en [%d,%d]\n', Xp, Yp);
+            
+            Pi_x = TX(1) - 2*abs(Xp - TX(1));
+            Pi_y = TX(2);
+            
+            x1 = mur(i,1);
+            y1 = mur(i,2);
+            dx1 = mur(i,3) - x1;
+            dy1 = mur(i,4) - y1;
+            
+            x2 = Pi_x;
+            y2 = Pi_y;
+            dx2 = RX(1) - x2;
+            dy2 = RX(2) - y2;
+            
+            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
+            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+            
+            plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
         end
         
     end
@@ -151,6 +194,30 @@ for Yp = TX(2) : +1 : DIM(1)
        
         if isIntersectWall(mur(i,:),Xp,Yp)
             fprintf('Haut - Intersection en [%d,%d]\n', Xp, Yp);
+            Pi_x = TX(1) ;
+            Pi_y = TX(2) + 2*abs(Yp - TX(2));
+            
+            x1 = mur(i,1);
+            y1 = mur(i,2);
+            dx1 = mur(i,3) - x1;
+            dy1 = mur(i,4) - y1;
+            
+            x2 = Pi_x;
+            y2 = Pi_y;
+            dx2 = RX(1) - x2;
+            dy2 = RX(2) - y2;
+            
+            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
+            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+            
+            plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
+            
+            %On vérifie ensuite que la droite entre le point d'intersection
+            %et le recepteur ne traverse pas un autre mur. Et aussi que
+            %l'on dépase pas 2 réflexion.
+            
+            %TO DO: Implémenter un fonction qui parcour les murs et dit si
+            %un droite en traverse un ou pas
         end
         
     end
@@ -166,6 +233,24 @@ for Yp = TX(2) : -1 : 0
         
         if isIntersectWall(mur(i,:),Xp,Yp)
             fprintf('Bas - Intersection en [%d,%d]\n', Xp, Yp);
+            
+            Pi_x = TX(1);
+            Pi_y = TX(2) - 2*abs(Yp - TX(2));
+            
+            x1 = mur(i,1);
+            y1 = mur(i,2);
+            dx1 = mur(i,3) - x1;
+            dy1 = mur(i,4) - y1;
+            
+            x2 = Pi_x;
+            y2 = Pi_y;
+            dx2 = RX(1) - x2;
+            dy2 = RX(2) - y2;
+            
+            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
+            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+            
+            plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
         end
 
     end
@@ -175,4 +260,4 @@ end
 
 
 %Affichage
-gui_project_ZC(mur, db_null, TX);
+%gui_project_ZC(mur, db_null, TX);
