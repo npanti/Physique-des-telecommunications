@@ -1,5 +1,11 @@
-function out = isIntersectWall(mur, Xp, Yp)
-        
+function out = isIntersectWall(mur, Xp, Yp, varargin)
+% Fonction qui retourne TRUE ou FALSE si un point ce trouve sur une segment
+% de droite
+check = 1;
+if ~isempty(varargin)
+    check = varargin{1};
+end
+    
         out = 0;
         Xo = mur(1);
         Yo = mur(2);
@@ -13,9 +19,14 @@ function out = isIntersectWall(mur, Xp, Yp)
            
             %On vérifie si le point est dans l'interval forme par les deux
             %points.
-            if min(Xo, Xo+dx) <= Xp && max(Xo, Xo+dx) >= Xp && min(Yo, Yo+dy) <= Yp && max(Yo, Yo+dy) >= Yp
+            if check
+                if min(Xo, Xo+dx) <= Xp && max(Xo, Xo+dx) >= Xp && min(Yo, Yo+dy) <= Yp && max(Yo, Yo+dy) >= Yp
+                    out = 1;
+                end
+            else
                 out = 1;
             end
+            
             
         end
 
