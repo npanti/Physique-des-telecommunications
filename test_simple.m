@@ -123,32 +123,19 @@ plot([TX(1) RX(1)], [TX(2) RX(2)], '*r', 'MarkerSize', 10);
 for Xp = TX(1) : +1 : DIM(1)
     
     Yp = TX(2);
-    %fprintf('[%d,%d]\n',Xp, Yp);
     
     for i=1: +1: size(mur,1)
        
         if isIntersectWall(mur(i,:),Xp,Yp, 0)
-            fprintf('Droite - Intersection en [%d,%d]\n', Xp, Yp);
             
             Pi_x = TX(1) + 2*abs(Xp - TX(1));
             Pi_y = TX(2);
             
-            x1 = mur(i,1);
-            y1 = mur(i,2);
-            dx1 = mur(i,3) - x1;
-            dy1 = mur(i,4) - y1;
-            
-            x2 = Pi_x;
-            y2 = Pi_y;
-            dx2 = RX(1) - x2;
-            dy2 = RX(2) - y2;
-            
-            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+            Pr = intersectionTwoLines(mur(i,:),[Pi_x Pi_y RX(1) RX(2)]);
             
             
-            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, RX(1), RX(2))
-                %plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
+            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, RX(1), RX(2))
+                plot([TX(1) Pr(1) RX(1)],[TX(2) Pr(2) RX(2)], 'r');
             end
             
             %Deuxieme réflexion
@@ -158,38 +145,15 @@ for Xp = TX(1) : +1 : DIM(1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
                         Pi2_x = Pi_x + 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
-
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                               
-
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
+                        
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
                             
@@ -204,37 +168,17 @@ for Xp = TX(1) : +1 : DIM(1)
                         Pi2_x = Pi_x - 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -246,37 +190,17 @@ for Xp = TX(1) : +1 : DIM(1)
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y + 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -288,37 +212,17 @@ for Xp = TX(1) : +1 : DIM(1)
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y - 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -333,31 +237,19 @@ end
 for Xp = TX(1) : -1 : 0
     
     Yp = TX(2);
-    %fprintf('[%d,%d]\n',Xp, Yp);
     
     for i=1: +1: size(mur,1)
        
         if isIntersectWall(mur(i,:),Xp,Yp, 0)
-            fprintf('Gauche - Intersection en [%d,%d]\n', Xp, Yp);
             
             Pi_x = TX(1) - 2*abs(Xp - TX(1));
             Pi_y = TX(2);
             
-            x1 = mur(i,1);
-            y1 = mur(i,2);
-            dx1 = mur(i,3) - x1;
-            dy1 = mur(i,4) - y1;
+            Pr = intersectionTwoLines(mur(i,:),[Pi_x Pi_y RX(1) RX(2)]);
             
-            x2 = Pi_x;
-            y2 = Pi_y;
-            dx2 = RX(1) - x2;
-            dy2 = RX(2) - y2;
             
-            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
-            
-            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, RX(1), RX(2))
-                %plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
+            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, RX(1), RX(2))
+                plot([TX(1) Pr(1) RX(1)],[TX(2) Pr(2) RX(2)], 'r');
             end
             
             %Deuxieme réflexion
@@ -367,38 +259,15 @@ for Xp = TX(1) : -1 : 0
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
                         Pi2_x = Pi_x + 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
-
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                               
-
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
+                        
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
                             
@@ -413,37 +282,17 @@ for Xp = TX(1) : -1 : 0
                         Pi2_x = Pi_x - 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -455,37 +304,17 @@ for Xp = TX(1) : -1 : 0
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y + 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -497,37 +326,17 @@ for Xp = TX(1) : -1 : 0
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y - 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -542,33 +351,19 @@ end
 for Yp = TX(2) : +1 : DIM(1)
     
     Xp = TX(1);
-    %fprintf('[%d,%d]\n',Xp, Yp);
     
     for i=1: +1: size(mur,1)
        
         if isIntersectWall(mur(i,:),Xp,Yp, 0)
-            fprintf('Haut - Intersection en [%d,%d]\n', Xp, Yp);
+            
             Pi_x = TX(1) ;
             Pi_y = TX(2) + 2*abs(Yp - TX(2));
             
-            x1 = mur(i,1);
-            y1 = mur(i,2);
-            dx1 = mur(i,3) - x1;
-            dy1 = mur(i,4) - y1;
+            Pr = intersectionTwoLines(mur(i,:),[Pi_x Pi_y RX(1) RX(2)]);
             
-            x2 = Pi_x;
-            y2 = Pi_y;
-            dx2 = RX(1) - x2;
-            dy2 = RX(2) - y2;
             
-            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
-            
-            %On vérifie ensuite que le point d'intersection se trouve bien
-            %sur le mur et que le point de reflexion se trouve entre le
-            %point image et le récepteur
-            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, RX(1), RX(2))
-                %plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
+            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, RX(1), RX(2))
+                plot([TX(1) Pr(1) RX(1)],[TX(2) Pr(2) RX(2)], 'r');
             end
             
             %Deuxieme réflexion
@@ -578,38 +373,15 @@ for Yp = TX(2) : +1 : DIM(1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
                         Pi2_x = Pi_x + 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
-
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                               
-
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
+                        
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
                             
@@ -624,37 +396,17 @@ for Yp = TX(2) : +1 : DIM(1)
                         Pi2_x = Pi_x - 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -666,37 +418,17 @@ for Yp = TX(2) : +1 : DIM(1)
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y + 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -708,37 +440,17 @@ for Yp = TX(2) : +1 : DIM(1)
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y - 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -753,31 +465,19 @@ end
 for Yp = TX(2) : -1 : 0
     
     Xp = TX(1);
-    %fprintf('[%d,%d]\n',Xp, Yp);
     
     for i=1: +1: size(mur,1)
         
         if isIntersectWall(mur(i,:),Xp,Yp, 0)
-            fprintf('Bas - Intersection en [%d,%d]\n', Xp, Yp);
             
             Pi_x = TX(1);
             Pi_y = TX(2) - 2*abs(Yp - TX(2));
             
-            x1 = mur(i,1);
-            y1 = mur(i,2);
-            dx1 = mur(i,3) - x1;
-            dy1 = mur(i,4) - y1;
+            Pr = intersectionTwoLines(mur(i,:),[Pi_x Pi_y RX(1) RX(2)]);
             
-            x2 = Pi_x;
-            y2 = Pi_y;
-            dx2 = RX(1) - x2;
-            dy2 = RX(2) - y2;
             
-            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
-            
-            if isIntersectWall(mur(i,:), Xi, Yi)  && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, RX(1), RX(2))
-                %plot([TX(1) Xi RX(1)],[TX(2) Yi RX(2)], 'r');
+            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, RX(1), RX(2))
+                plot([TX(1) Pr(1) RX(1)],[TX(2) Pr(2) RX(2)], 'r');
             end
             
             %Deuxieme réflexion
@@ -787,38 +487,15 @@ for Yp = TX(2) : -1 : 0
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
                         Pi2_x = Pi_x + 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
-
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                               
-
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
+                        
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
                             
@@ -833,37 +510,17 @@ for Yp = TX(2) : -1 : 0
                         Pi2_x = Pi_x - 2*abs(Xp2 - Pi_x);
                         Pi2_y = Pi_y;
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -875,37 +532,17 @@ for Yp = TX(2) : -1 : 0
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y + 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
@@ -917,37 +554,17 @@ for Yp = TX(2) : -1 : 0
                         Pi2_x = Pi_x;
                         Pi2_y = Pi_y - 2*abs(Yp2 - Pi_y);
 
-                        x1 = mur(j,1);
-                        y1 = mur(j,2);
-                        dx1 = mur(j,3) - x1;
-                        dy1 = mur(j,4) - y1;
-
-                        x2 = Pi2_x;
-                        y2 = Pi2_y;
-                        dx2 = RX(1) - x2;
-                        dy2 = RX(2) - y2;
-
-                        X2i = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                        Y2i = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        Pr2 = intersectionTwoLines(mur(j,:), [Pi2_x Pi2_y RX(1) RX(2)]);
                         
-                        if isIntersectWall(mur(j,:), X2i, Y2i) && isBetweenTwoPoints(X2i, Y2i, Pi2_x, Pi2_y, RX(1), RX(2))
-                            x1 = mur(i,1);
-                            y1 = mur(i,2);
-                            dx1 = mur(i,3) - x1;
-                            dy1 = mur(i,4) - y1;
-
-                            x2 = X2i;
-                            y2 = Y2i;
-                            dx2 = Pi_x - x2;
-                            dy2 = Pi_y - y2;
-
-                            Xi = -(dx2*dy1*x1 - dx1*dy2*x2 - dx1*dx2*y1 + dx1*dx2*y2)/(dx1*dy2 - dx2*dy1);
-                            Yi = -(dy1*dy2*x1 - dy1*dy2*x2 - dx1*dy2*y1 + dx2*dy1*y2)/(dx1*dy2 - dx2*dy1);
+                        if isIntersectWall(mur(j,:), Pr2(1), Pr2(2)) && isBetweenTwoPoints(Pr2(1), Pr2(2), Pi2_x, Pi2_y, RX(1), RX(2))
                             
-                            if isIntersectWall(mur(i,:), Xi, Yi) && isBetweenTwoPoints(Xi, Yi, Pi_x, Pi_y, X2i, Y2i)
-                                plot([TX(1) Xi X2i RX(1)],[TX(2) Yi Y2i RX(2)], 'g');
+                            Pr = intersectionTwoLines(mur(i,:), [Pr2(1) Pr2(2) Pi_x Pi_y]);
+                            
+                            if isIntersectWall(mur(i,:), Pr(1), Pr(2)) && isBetweenTwoPoints(Pr(1), Pr(2), Pi_x, Pi_y, Pr2(1), Pr2(2))
+                                plot([TX(1) Pr(1) Pr2(1) RX(1)],[TX(2) Pr(2) Pr2(2) RX(2)], 'g');
                             
                             end
+                            
                         end
                     end
                 end
