@@ -5,10 +5,6 @@ clc;
 TX = [1 1];
 RX = [7 8];
 
-DIM3 = [26 22];
-DIM2 = [20 10];
-DIM = [10 10];
-
 %Pièce simple (carrée)
 mur = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
 mur2 = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6] ;
@@ -116,11 +112,14 @@ for a=1: +1: size(mur,1)
    hold on;
 end
 
+Xmax = max([mur(:,1) mur(:,3)]);
+Ymax = max([mur(:,2) mur(:,4)]);
+
 plot([TX(1) RX(1)], [TX(2) RX(2)], '*r', 'MarkerSize', 10);
 
 %On parcour de gauche à droite et de haut en bas à partir de TX
 
-for Xp = TX(1) : +1 : DIM(1)
+for Xp = TX(1) : +1 : Xmax(1)
     
     Yp = TX(2);
     
@@ -348,7 +347,7 @@ for Xp = TX(1) : -1 : 0
     
 end
 
-for Yp = TX(2) : +1 : DIM(1)
+for Yp = TX(2) : +1 : Ymax(1)
     
     Xp = TX(1);
     
