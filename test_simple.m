@@ -3,12 +3,12 @@ clc;
 
 %Récepteur et émeteur [x y]
 TX = [1 1];
-RX = [7 8];
+RX = [20 3];
 
 %Pièce simple (carrée)
-mur = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
+mur1 = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
 mur2 = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6] ;
-mur3 = [
+mur = [
     0 0 26 0;
     26 0 26 22;
     26 22 0 22;
@@ -115,7 +115,7 @@ end
 Xmax = max([mur(:,1) mur(:,3)]);
 Ymax = max([mur(:,2) mur(:,4)]);
 
-plot([TX(1) RX(1)], [TX(2) RX(2)], '*r', 'MarkerSize', 10);
+plot([TX(1) RX(1)], [TX(2) RX(2)], '-*k', 'MarkerSize', 10);
 
 %On parcour de gauche à droite et de haut en bas à partir de TX
 
@@ -138,7 +138,7 @@ for Xp = TX(1) : +1 : Xmax(1)
             end
             
             %Deuxieme réflexion
-            for Xp2 = Pi_x: +1: DIM(1)
+            for Xp2 = Pi_x: +1: Xmax(1)
                 Yp2 = Pi_y;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -182,7 +182,7 @@ for Xp = TX(1) : +1 : Xmax(1)
                     end
                 end
             end
-            for Yp2 = Pi_y: +1: DIM(2)
+            for Yp2 = Pi_y: +1: Ymax(1)
                 Xp2 = Pi_x;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -252,7 +252,7 @@ for Xp = TX(1) : -1 : 0
             end
             
             %Deuxieme réflexion
-            for Xp2 = Pi_x: +1: DIM(1)
+            for Xp2 = Pi_x: +1: Xmax(1)
                 Yp2 = Pi_y;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -296,7 +296,7 @@ for Xp = TX(1) : -1 : 0
                     end
                 end
             end
-            for Yp2 = Pi_y: +1: DIM(2)
+            for Yp2 = Pi_y: +1: Ymax(1)
                 Xp2 = Pi_x;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -366,7 +366,7 @@ for Yp = TX(2) : +1 : Ymax(1)
             end
             
             %Deuxieme réflexion
-            for Xp2 = Pi_x: +1: DIM(1)
+            for Xp2 = Pi_x: +1: Xmax(1)
                 Yp2 = Pi_y;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -410,7 +410,7 @@ for Yp = TX(2) : +1 : Ymax(1)
                     end
                 end
             end
-            for Yp2 = Pi_y: +1: DIM(2)
+            for Yp2 = Pi_y: +1: Ymax(1)
                 Xp2 = Pi_x;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -480,7 +480,7 @@ for Yp = TX(2) : -1 : 0
             end
             
             %Deuxieme réflexion
-            for Xp2 = Pi_x: +1: DIM(1)
+            for Xp2 = Pi_x: +1: Xmax(1)
                 Yp2 = Pi_y;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
@@ -524,7 +524,7 @@ for Yp = TX(2) : -1 : 0
                     end
                 end
             end
-            for Yp2 = Pi_y: +1: DIM(2)
+            for Yp2 = Pi_y: +1: Ymax(1)
                 Xp2 = Pi_x;
                 for j=1: +1: size(mur,1)
                     if isIntersectWall(mur(j,:),Xp2,Yp2, 0)
