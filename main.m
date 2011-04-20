@@ -3,14 +3,14 @@ clc;
 
 %Récepteur et émeteur [x y]
 TX = [1 1];
-RX = [15 10];
+RX = [15 8];
 
 reflexion_max = 3;
 
 %Pièce simple (carrée)
 mur1 = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
-mur2 = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6] ;
-mur = [
+mur = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6] ;
+mur3 = [
     0 0 26 0;
     26 0 26 22;
     26 22 0 22;
@@ -107,11 +107,20 @@ db_null = [10 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ];
        
+tic();
 %Tracage des murs
 for a=1: +1: size(mur,1)
-   plot([mur(a,1) mur(a,3)],[mur(a,2) mur(a,4)]);
+   plot([mur(a,1) mur(a,3)],[mur(a,2) mur(a,4)],'r');
    hold on;
 end
 
+%Chemin direct
+plot([TX(1) RX(1)],[TX(2) RX(2)],'g');
+
 %Lancement du programme de raytracing
 raytracing(TX, mur, TX, RX, reflexion_max);
+
+plot(TX(1), TX(2), '*r', 'MarkerSize', 10);
+plot(RX(1), RX(2), '*r', 'MarkerSize', 10);
+
+toc();

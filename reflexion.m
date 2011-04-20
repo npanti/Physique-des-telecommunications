@@ -18,8 +18,6 @@ function reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_wall
         if isIntersectWall(wall(selected_wall(reflex_i),:), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), RX(1), RX(2))
             if (reflex_i - 1) > 0
                 reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
-            else
-                plot([TX(1) fliplr(Pr(:,1)') RX(1)],[TX(2) fliplr(Pr(:,2)') RX(2)], 'g');
             end
         end
         
@@ -35,7 +33,7 @@ function reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_wall
                 if (reflex_i - 1) > 0
                     reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
                 else
-                    plot([TX(1) fliplr(Pr(:,1)') RX(1)],[TX(2) fliplr(Pr(:,2)') RX(2)], 'g');
+                    plot([TX(1) fliplr(Pr(:,1)') RX(1)],[TX(2) fliplr(Pr(:,2)') RX(2)], 'b');
                 end
             end
         end
