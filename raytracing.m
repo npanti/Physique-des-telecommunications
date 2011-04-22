@@ -1,171 +1,122 @@
-function raytracing(init_point, wall, TX, RX, reflexion_max, varargin)
-%UNTITLED Summary of this function goes here
+function raytracing(wall, init_point, RX, reflexion_max, varargin)
+%UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
 
-reflex_i = 1;
-
-if size(varargin, 2) >= 1
-    reflex_i = varargin{1};
-    
-    if size(varargin, 2) >= 2
-       P_i = varargin{2}; 
-       
-       if size(varargin, 2) >= 3
-          wallArrayPos = varargin{3}; 
-       end
-       
+    reflexion_i = 1;
+    TX = init_point;
+    Pi = 0;
+    wall_pos = 0;
+    if ~isempty(varargin)
+        reflexion_i = varargin{1};
+        Pi = varargin{2};
+        wall_pos = varargin{3};
+        TX = varargin{4};
     end
     
-end
-
-    
-
-    Xmax = max([wall(:,1) wall(:,3)]);
-    Ymax = max([wall(:,2) wall(:,4)]);
-    
-    %Déplacement du point vers les x positif
-    for Xp = init_point(1) : +1 : Xmax(1)
-    
-        Yp = init_point(2);
+    for i=1: +1: size(wall,1)
         
-        %On parcour tout les murs
-        for i=1: +1: size(wall,1)
+        %On vérifie que le mur se situe entre l'émetteur et le récepteur
+        
+        %Si le mur est vertical
+        if wall(i,1) == wall(i,3)
             
-            %On vérifie si le point de parcour se trouve sur une droite
-            %formé par les murs
-            if isIntersectWall(wall(i,:),Xp,Yp, 0)
+            %Si le mur est à gauche du point inital
+            if wall(i,1) < init_point(1)
+               
+                %Calcul du point image
+                Pi_x = init_point(1) - 2*abs(init_point(1) - wall(i,1));
+                Pi_y = init_point(2);
                 
-                if reflex_i == 1
-                    Pi_x = TX(1) + 2*abs(Xp - TX(1));
-                    Pi_y = TX(2);
+                %Si ce n'est pas le premier point image on le concate avec
+                %le matrice des points images
+                if reflexion_i == 1
                     Pi_tmp = [Pi_x Pi_y];
-                    wallArrayPos_tmp = i;
+                    wall_pos_tmp = i;
                 else
-                    Pi_x = P_i(reflex_i-1,1) + 2*abs(Xp - P_i(reflex_i-1,1));
-                    Pi_y = P_i(reflex_i-1,2);
-                    Pi_tmp = vertcat(P_i, [Pi_x Pi_y]);
-                    wallArrayPos_tmp = vertcat(wallArrayPos, i);
+                    Pi_tmp = vertcat(Pi, [Pi_x Pi_y]);
+                    wall_pos_tmp = vertcat(wall_pos,i);
                 end
                 
-                %On lance le tracing
-                reflexion(wall, TX, RX, 0, Pi_tmp, reflex_i, reflex_i, wallArrayPos_tmp);
+                reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 
-                %On relance la fonction pour la réflexion suivante
-                if reflex_i + 1 <= reflexion_max
-                    raytracing([Pi_x Pi_y], wall, TX, RX, reflexion_max, reflex_i + 1, Pi_tmp, wallArrayPos_tmp);
+                if reflexion_i < reflexion_max
+                   raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX);
                 end
                 
+            %Si le mur est à droite du point initial
+            elseif wall(i,1) > init_point(1)
+                %Calcul du point image
+                Pi_x = init_point(1) + 2*abs(init_point(1) - wall(i,1));
+                Pi_y = init_point(2);
+                
+                %Si ce n'est pas le premier point image on le concate avec
+                %le matrice des points images
+                if reflexion_i == 1
+                    Pi_tmp = [Pi_x Pi_y];
+                    wall_pos_tmp = i;
+                else
+                    Pi_tmp = vertcat(Pi, [Pi_x Pi_y]);
+                    wall_pos_tmp = vertcat(wall_pos,i);
+                end
+                
+                reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
+                
+                if reflexion_i < reflexion_max
+                   raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX);
+                end
             end
+        
+        %Si le mur est horizontal
+        elseif wall(i,2) == wall(i,4)
             
-        end
-
-    end
-
-    for Xp = init_point(1) : -1 : 0
-
-        Yp = init_point(2);
-
-        for i=1: +1: size(wall,1)
-            
-            if isIntersectWall(wall(i,:),Xp,Yp, 0)
+            %Si le mur est en bas du point inital
+            if wall(i,2) < init_point(2)
+               
+                %Calcul du point image
+                Pi_x = init_point(1);
+                Pi_y = init_point(2) - 2*abs(init_point(2) - wall(i,2));
                 
-                if reflex_i == 1
-                    Pi_x = TX(1) - 2*abs(Xp - TX(1));
-                    Pi_y = TX(2);
+                %Si ce n'est pas le premier point image on le concate avec
+                %le matrice des points images
+                if reflexion_i == 1
                     Pi_tmp = [Pi_x Pi_y];
-                    wallArrayPos_tmp = i;
+                    wall_pos_tmp = i;
                 else
-                    Pi_x = P_i(reflex_i-1,1) - 2*abs(Xp - P_i(reflex_i-1,1));
-                    Pi_y = P_i(reflex_i-1,2);
-                    Pi_tmp = vertcat(P_i, [Pi_x Pi_y]);
-                    wallArrayPos_tmp = vertcat(wallArrayPos, i);
+                    Pi_tmp = vertcat(Pi, [Pi_x Pi_y]);
+                    wall_pos_tmp = vertcat(wall_pos,i);
                 end
                 
-                %On lance le tracing
-                reflexion(wall, TX, RX, 0, Pi_tmp, reflex_i, reflex_i, wallArrayPos_tmp);
+                reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 
-                %On relance la fonction pour la réflexion suivante
-                if reflex_i + 1 <= reflexion_max
-                    
-                    raytracing([Pi_x Pi_y], wall, TX, RX, reflexion_max, reflex_i + 1, Pi_tmp, wallArrayPos_tmp);
+                if reflexion_i < reflexion_max
+                   raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX);
                 end
                 
+            %Si le mur est en haut du point initial
+            elseif wall(i,2) > init_point(2)
+                %Calcul du point image
+                Pi_x = init_point(1);
+                Pi_y = init_point(2) + 2*abs(init_point(2) - wall(i,2));
+                
+                %Si ce n'est pas le premier point image on le concate avec
+                %le matrice des points images
+                if reflexion_i == 1
+                    Pi_tmp = [Pi_x Pi_y];
+                    wall_pos_tmp = i;
+                else
+                    Pi_tmp = vertcat(Pi, [Pi_x Pi_y]);
+                    wall_pos_tmp = vertcat(wall_pos,i);
+                end
+                
+                reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
+                
+                if reflexion_i < reflexion_max
+                   raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX);
+                end
             end
-
+  
         end
-
+        
     end
-
-    for Yp = init_point(2) : +1 : Ymax(1)
-
-        Xp = init_point(1);
-
-        for i=1: +1: size(wall,1)
-            
-            if isIntersectWall(wall(i,:),Xp,Yp, 0)
-                
-                if reflex_i == 1
-                    Pi_x = TX(1);
-                    Pi_y = TX(2) + 2*abs(Yp - TX(2));
-                    Pi_tmp = [Pi_x Pi_y];
-                    wallArrayPos_tmp = i;
-                else
-                    Pi_x = P_i(reflex_i-1,1);
-                    Pi_y = P_i(reflex_i-1,2) + 2*abs(Yp - P_i(reflex_i-1,2));
-                    Pi_tmp = vertcat(P_i, [Pi_x Pi_y]);
-                    wallArrayPos_tmp = vertcat(wallArrayPos, i);
-                end
-                
-                %On lance le tracing
-                reflexion(wall, TX, RX, 0, Pi_tmp, reflex_i, reflex_i, wallArrayPos_tmp);
-                
-                %On relance la fonction pour la réflexion suivante
-                if reflex_i + 1 <= reflexion_max
-                    
-                    raytracing([Pi_x Pi_y], wall, TX, RX, reflexion_max, reflex_i + 1, Pi_tmp, wallArrayPos_tmp);
-                end
-                
-            end
-
-        end
-
-    end
-
-    for Yp = init_point(2) : -1 : 0
-
-        Xp = init_point(1);
-
-        for i=1: +1: size(wall,1)
-            
-            if isIntersectWall(wall(i,:),Xp,Yp, 0)
-                
-                if reflex_i == 1
-                    Pi_x = TX(1);
-                    Pi_y = TX(2) - 2*abs(Yp - TX(2));
-                    Pi_tmp = [Pi_x Pi_y];
-                    wallArrayPos_tmp = i;
-                else
-                    Pi_x = P_i(reflex_i-1,1);
-                    Pi_y = P_i(reflex_i-1,2) - 2*abs(Yp - P_i(reflex_i-1,2));
-                    Pi_tmp = vertcat(P_i, [Pi_x Pi_y]);
-                    wallArrayPos_tmp = vertcat(wallArrayPos, i);
-                end
-                
-                %On lance le tracing
-                reflexion(wall, TX, RX, 0, Pi_tmp, reflex_i, reflex_i, wallArrayPos_tmp);
-                
-                %On relance la fonction pour la réflexion suivante
-                if reflex_i + 1 <= reflexion_max
-                    
-                    raytracing([Pi_x Pi_y], wall, TX, RX, reflexion_max, reflex_i + 1, Pi_tmp, wallArrayPos_tmp);
-                end
-                
-            end            
-
-        end
-
-    end
-    
-
 end
 

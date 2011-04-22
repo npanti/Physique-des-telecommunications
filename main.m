@@ -3,14 +3,14 @@ clc;
 
 %Récepteur et émeteur [x y]
 TX = [1 1];
-RX = [15 8];
+RX = [15 9];
 
-reflexion_max = 3;
+reflexion_max = 2;
 
 %Pièce simple (carrée)
 mur1 = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
-mur = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6] ;
-mur3 = [
+mur2 = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6; 5 5 15 5] ;
+mur = [
     0 0 26 0;
     26 0 26 22;
     26 22 0 22;
@@ -105,7 +105,7 @@ db_null = [10 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
            1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
-           1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 ];
+           1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1];
        
 tic();
 %Tracage des murs
@@ -118,9 +118,11 @@ end
 plot([TX(1) RX(1)],[TX(2) RX(2)],'g');
 
 %Lancement du programme de raytracing
-raytracing(TX, mur, TX, RX, reflexion_max);
+raytracing(mur,TX,RX,3);
 
-plot(TX(1), TX(2), '*r', 'MarkerSize', 10);
-plot(RX(1), RX(2), '*r', 'MarkerSize', 10);
+plot(TX(1), TX(2), '.r', 'MarkerSize', 10);
+plot(RX(1), RX(2), '.r', 'MarkerSize', 10);
+
+diffractionPoints(mur,TX,RX);
 
 toc();

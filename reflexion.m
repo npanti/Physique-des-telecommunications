@@ -5,16 +5,21 @@ function reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_wall
     k = reflexion_max - reflex_i + 1;
     k_old = reflexion_max - reflex_i;
     %fprintf('Mur selectionné = %d\n',selected_wall(reflex_i));
+    
 
+    %Calcul du point d'intersection
     if reflex_i == reflexion_max
         Pr_i = intersectionTwoLines(wall(selected_wall(reflex_i),:), [P_i(reflex_i,:) RX(1) RX(2)]);
     else
         Pr_i = intersectionTwoLines(wall(selected_wall(reflex_i),:), [Pr(k_old,:) P_i(reflex_i,:)]);
     end
     
-    if Pr == 0
+    
+    if size(Pr,2) ~= 2
         Pr = Pr_i;
         
+        %Vérifie que le point d'intersection vérifie les conditions
+        %d'existence
         if isIntersectWall(wall(selected_wall(reflex_i),:), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), RX(1), RX(2))
             if (reflex_i - 1) > 0
                 reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
@@ -37,12 +42,6 @@ function reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_wall
                 end
             end
         end
-    end
-    
-    if reflex_i == reflexion_max
-
-    else
-
     end
 
 end
