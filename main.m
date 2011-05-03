@@ -8,16 +8,16 @@ beta = 2*pi*f/300e6;
 
 %Récepteur et émeteur [x y]
 TX = [1 1];
-RX = [7 8];
+RX = [15 8];
 
 G_TX = 1.6524;
 
 reflexion_max = 2;
 
 %Pièce simple (carrée)
-mur = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
-mur2 = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6; 5 5 15 5] ;
-mur3 = [
+mur1 = [0 0 0 10 ; 0 10 10 10 ; 10 10 10 0 ; 10 0 0 0];
+mur2 = [0 0 0 10 ; 0 10 20 10 ; 20 10 20 0 ; 20 0 0 0 ; 10 0 10 4 ; 10 10 10 6; 5 5 15 5];
+mur = [
     0 0 26 0;
     26 0 26 22;
     26 22 0 22;
@@ -45,8 +45,8 @@ mur3 = [
     10 7 13 7;
     10 7 10 5;
     10 5 12 5;
-    7 13 13 13;
     13 13 13 22;
+    7 13 13 13;
     7 14 13 14;
     7 16 13 16;
     8 17 10 17;
@@ -136,15 +136,19 @@ end
 plot([TX(1) RX(1)],[TX(2) RX(2)],'g');
 
 %Lancement du programme de raytracing
-Pr = raytracing(mur,TX,RX,3);
+Pr = raytracing(mur,TX,RX,reflexion_max);
+Tr = transmission(mur,TX,RX,Pr);
 
-%Lancement du programme de calcul de puissance et db
+%diffractionPoints(mur,TX,RX);
 
-diffractionPoints(mur,TX,RX);
+%Lancement du programme de calcul de puissance et débit
+
 
 plot(TX(1), TX(2), '.r', 'MarkerSize', 10);
 plot(RX(1), RX(2), '.r', 'MarkerSize', 10);
 
 toc();
+%load handel;
+%sound(y,Fs);
 
 %gui_project_ZC(mur,db_null2,TX);
