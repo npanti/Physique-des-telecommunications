@@ -4,7 +4,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
     
     reflexion_i = 1;
     if reflexion_i == 1;
-        P_reflexion = 0;
+        P_reflexion = zeros(reflexion_max,3);
     end
     TX = init_point;
     Pi = 0;
@@ -45,9 +45,9 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 %S'il y a eu réflexion
                 if size(Pr,2) > 1
                     if P_reflexion == 0
-                        P_reflexion = Pr;
+                        P_reflexion(1,:) = Pr;
                     else
-                        P_reflexion = [P_reflexion; Pr];
+                        P_reflexion(1:size(Pr,1),:,size(P_reflexion,3)+1) = Pr;
                     end  
                 end
                 
@@ -74,9 +74,9 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 if size(Pr,2) > 1
                     if P_reflexion == 0
-                        P_reflexion = Pr;
+                        P_reflexion(1,:) = Pr;
                     else
-                        P_reflexion = [P_reflexion; Pr];
+                        P_reflexion(1:size(Pr,1),:,size(P_reflexion,3)+1) = Pr;
                     end
                 end
                 
@@ -108,9 +108,9 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 if size(Pr,2) > 1
                     if P_reflexion == 0
-                        P_reflexion = Pr;
+                        P_reflexion(1,:) = Pr;
                     else
-                        P_reflexion = [P_reflexion; Pr];
+                        P_reflexion(1:size(Pr,1),:,size(P_reflexion,3)+1) = Pr;
                     end
                 end
                 
@@ -137,9 +137,9 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 if size(Pr,2) > 1
                     if P_reflexion == 0
-                        P_reflexion = Pr;
+                        P_reflexion(1,:) = Pr;
                     else
-                        P_reflexion = [P_reflexion; Pr];
+                        P_reflexion(1:size(Pr,1),:,size(P_reflexion,3)+1) = Pr;
                     end
                 end
                 
