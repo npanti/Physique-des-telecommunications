@@ -1,10 +1,6 @@
-function out = isIntersectSegment(mur, Xp, Yp, varargin)
+function out = isIntersectSegment(mur, Xp, Yp)
 % Fonction qui retourne TRUE ou FALSE si un point ce trouve sur une segment
 % de droite
-check = 1;
-if ~isempty(varargin)
-    check = varargin{1};
-end
     
         out = 0;
         Xo = mur(1);
@@ -20,7 +16,6 @@ end
            
             %On vérifie si le point est dans l'interval forme par les deux
             %points.
-            if check
                 if min(Xo, Xo+dx) <= Xp && max(Xo, Xo+dx) >= Xp && min(Yo, Yo+dy) <= Yp && max(Yo, Yo+dy) >= Yp
                     out = 1; 
                 %Mur vertical
@@ -39,9 +34,6 @@ end
                     end
 
                 end
-            else
-                out = 1;
-            end
             
             
         %end
