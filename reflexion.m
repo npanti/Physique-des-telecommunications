@@ -9,9 +9,9 @@ function P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_
 
     %Calcul du point d'intersection
     if reflex_i == reflexion_max
-        Pr_i = intersectionTwoLines(wall(selected_wall(reflex_i),:), [P_i(reflex_i,:) RX(1) RX(2)]);
+        Pr_i = intersectionTwoLines(wall(selected_wall(reflex_i),1:4), [P_i(reflex_i,:) RX(1) RX(2)]);
     else
-        Pr_i = intersectionTwoLines(wall(selected_wall(reflex_i),:), [Pr(k_old,1) Pr(k_old,2) P_i(reflex_i,:)]);
+        Pr_i = intersectionTwoLines(wall(selected_wall(reflex_i),1:4), [Pr(k_old,1) Pr(k_old,2) P_i(reflex_i,:)]);
     end
     
     
@@ -20,7 +20,7 @@ function P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_
         
         %Vérifie que le point d'intersection vérifie les conditions
         %d'existence
-        if isIntersectSegment(wall(selected_wall(reflex_i),:), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), RX(1), RX(2))
+        if isIntersectSegment(wall(selected_wall(reflex_i),1:4), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), RX(1), RX(2))
             if (reflex_i - 1) > 0
                 P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
             else
@@ -36,7 +36,7 @@ function P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_
         
             Pr = [Pr; [Pr_i selected_wall(reflex_i)]];
 
-            if isIntersectSegment(wall(selected_wall(reflex_i),:), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), Pr(k_old,1), Pr(k_old,2))
+            if isIntersectSegment(wall(selected_wall(reflex_i),1:4), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), Pr(k_old,1), Pr(k_old,2))
                 if (reflex_i - 1) > 0
 
                     P_tmp = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
