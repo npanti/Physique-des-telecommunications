@@ -4,7 +4,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
     
     reflexion_i = 1;
     if reflexion_i == 1;
-        P_reflexion = zeros(reflexion_max,3);
+        P_reflexion = zeros(reflexion_max,4);
     end
     TX = init_point;
     Pi = 0;

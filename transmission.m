@@ -6,10 +6,9 @@ function Tr = transmission(wall, TX, RX, Pr)
     for i=1:+1:size(Pr,3)
         
         first = 1;
-        Tr_tmp = 1;
         for j=size(Pr,1):-1:0
             
-            if j==0 || ~isequal(Pr(j,:,i),[0 0 0])
+            if j==0 || ~isequal(Pr(j,:,i),[0 0 0 0])
                
                 %Si on tombe sur le premier point de reflexion on prend la
                 %droite entre l'émeteur et le premier point de reflexion
@@ -50,17 +49,11 @@ function Tr = transmission(wall, TX, RX, Pr)
                         %segment du mur et pas la droite formé par le mur
                         if (P_intersection(1) ~= P_tmp(1) && P_intersection(2) ~= P_tmp(2)) || (P_intersection(1) ~= P_tmp(3) && P_intersection(2) ~= P_tmp(4))
                             if (isIntersectSegment(wall(m,1:4),P_intersection(1), P_intersection(2)) && isIntersectSegment(P_tmp,P_intersection(1), P_intersection(2)))
-                                plot(P_intersection(1),P_intersection(2),'.k', 'MarkerSize', 10);
+                                %plot(P_intersection(1),P_intersection(2),'.k', 'MarkerSize', 10);
 
                                 theta_i = angleBetweenTwoLines(wall(m,1:4),P_tmp);
 
-                                if theta_i < 0
-                                    theta_i;
-                                    wall(m,1:4);
-                                    P_tmp;
-                                end
-
-                                Tr_tmp = Tr_tmp*coef_transmission(wall(m,5),wall(m,6), wall(m,7),theta_i);
+                                Tr(i) = Tr(i)*coef_transmission(wall(m,5),wall(m,6), wall(m,7),theta_i);
 
                             end
                         end
@@ -70,8 +63,6 @@ function Tr = transmission(wall, TX, RX, Pr)
                 
                 first = 0;
             end
-            
-            Tr(i) = Tr_tmp;
             
         end
         
