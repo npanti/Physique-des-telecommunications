@@ -1,4 +1,4 @@
-function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
+function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin) %#codegen
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
     

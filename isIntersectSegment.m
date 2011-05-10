@@ -1,7 +1,6 @@
 function out = isIntersectSegment(mur, Xp, Yp)
 % Fonction qui retourne TRUE ou FALSE si un point ce trouve sur une segment
 % de droite
-    
         out = 0;
         Xo = mur(1);
         Yo = mur(2);

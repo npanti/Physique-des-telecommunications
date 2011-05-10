@@ -2,6 +2,8 @@ function R = coef_reflection(wall,Pr)
 %COEF_REFLECTION Fonction qui retourne une matrice avec les coefficients de
 %                reflexion total
 %   Detailed explanation goes here
+
+    global beta;
     
     R = ones(size(Pr,3),1);
     
@@ -21,7 +23,7 @@ function R = coef_reflection(wall,Pr)
             
             R_perp = coef_reflection_perp(eps_r,sigma,theta_i,theta_t);
             
-            R(i) = R(i) * (R_perp+(1-R_perp^2)*(R_perp*exp(-2*gamma*s+gamma*2*s*sin(theta_t)*sin(theta_i)) / (1-R_perp^2*exp(-2*gamma*s+gamma*2*sin(theta_t)*sin(theta_i)))));
+            R(i) = R(i) * (R_perp+(1-R_perp^2)*(R_perp*exp(-2*gamma*s+1i*beta*2*s*sin(theta_t)*sin(theta_i)) / (1-R_perp^2*exp(-2*gamma*s+1i*beta*2*sin(theta_t)*sin(theta_i)))));
             end
         
         end
