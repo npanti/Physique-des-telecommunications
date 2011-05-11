@@ -99,15 +99,18 @@ mur = [
     21     7    21     5    0.1    5    0.1
     20     8    26     8    0.1    5    0.1
     21    10    21     9    0.1    5    0.1];
-       
+
 tic();
 
 %Lancement du programme de raytracing
 
 db_power = zeros(x,y);
+bitrate_mb = zeros(x,y);
+
 end_time = 0;
 total_time = 0;
 moyenne = 0;
+
 for i=0.5:+1:x
    for j=0.5:+1:y
        
@@ -116,26 +119,27 @@ for i=0.5:+1:x
        fprintf('Avancement : %.2f %% \nTemps estimé: %.2f minutes',((i+0.5-1)*y+j+0.5)/(x*y)*100, (moyenne*x*y-total_time)/60);
 
        RX = [i j];
-       tic
+       ray = tic();
        Pr = raytracing(mur,TX,RX,reflexion_max);
-       fprintf('\n Raytracing %f', toc);
-       tic
+       fprintf('\n Raytracing %f', toc(ray));
+       trans = tic();
        Tr = transmission(mur,TX,RX,Pr);
-       fprintf('\n transmission %f', toc);
-       tic
+       fprintf('\n transmission %f', toc(trans));
+       coef = tic();
        R = coef_reflection(mur,Pr);
-       fprintf('\n coef_reflexion %f', toc);
+       fprintf('\n coef_reflexion %f', toc(coef));
        
-       tic
+       champ = tic();
        E_tot = electric_field(Pr,Tr,R,TX,RX);
-       fprintf('\n Champs tot %f', toc);
+       fprintf('\n Champs tot %f', toc(champ));
        
        %Chemin direct
        Tr_direct = transmission(mur,TX,RX);
        E_direct = electric_field(0,Tr_direct,0,TX,RX);
        
        E_tot(size(E_tot,1)+1) = E_direct;
-
+        
+       
        db_power(i+0.5,j+0.5) = signal_strength(E_tot);
        
        end_time = toc(ticID);
@@ -145,15 +149,14 @@ for i=0.5:+1:x
    end
 end
 
-E = 0;
-for k=1:+1:size(E_tot,1)
-    E = E + E_tot(k);
-end
+%On calcul le debit binaire
+bitrate_mb = bitrate(db_power);
 
 %diffractionPoints(mur,TX,RX);
 
 fprintf('\n');
 toc();
 gui_project_ZC(mur,db_power,TX);
+gui_project_DR(mur,bitrate_mb,TX);
 %load handel;
 %sound(y,Fs);
