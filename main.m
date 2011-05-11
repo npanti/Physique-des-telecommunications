@@ -1,7 +1,7 @@
 clear;
 clc;
 
-global beta lambda f Z0 G_TX P_TX h_e Ra;
+global beta lambda f Z0 G_TX P_TX h_e Ra TX RX eps0 mhu0 omega;
 
 %Norme
 P_TX_dbm = 12;
@@ -12,6 +12,9 @@ lambda = 300e6/f;
 h_e = -lambda/pi;
 %h_e = -lambda/pi*cos(pi/2*cos(pi/2))/sin(pi/2)^2; %Formule generale
 Ra = 75;
+eps0 = 8.854187e-12;
+mhu0 = pi*4e-7;
+omega = 2*pi*f;
 
 %impédance du vide
 Z0 = 120*pi;
@@ -21,7 +24,7 @@ TX = [2 2];
 
 G_TX = 1.6524;
 
-reflexion_max = 1;
+reflexion_max = 2;
 
 %Pièce simple (carrée)
 x=26;
@@ -120,7 +123,7 @@ for i=0.5:+1:x
 
        RX = [i j];
        ray = tic();
-       Pr = raytracing(mur,TX,RX,reflexion_max);
+       Pr = raytracing(mur,TX,reflexion_max);
        fprintf('\n Raytracing %f', toc(ray));
        trans = tic();
        Tr = transmission(mur,TX,RX,Pr);

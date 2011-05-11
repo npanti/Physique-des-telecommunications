@@ -1,7 +1,9 @@
-function P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_wall)
+function P = reflexion(wall, Pr, P_i, reflexion_max, reflex_i, selected_wall)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
-    
+
+    global RX;
+
     P = 0;
     
     k = reflexion_max - reflex_i + 1;
@@ -24,7 +26,7 @@ function P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_
         %d'existence
         if isIntersectSegment(wall(selected_wall(reflex_i),1:4), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), RX(1), RX(2))
             if (reflex_i - 1) > 0
-                P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
+                P = reflexion(wall, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
             else
                 %plot([TX(1) fliplr(Pr(:,1)') RX(1)],[TX(2) fliplr(Pr(:,2)') RX(2)], 'b');
                 P = Pr;
@@ -41,7 +43,7 @@ function P = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i, selected_
             if isIntersectSegment(wall(selected_wall(reflex_i),1:4), Pr(k,1), Pr(k,2)) && isBetweenTwoPoints(Pr(k,1), Pr(k,2), P_i(reflex_i,1), P_i(reflex_i,2), Pr(k_old,1), Pr(k_old,2))
                 if (reflex_i - 1) > 0
 
-                    P_tmp = reflexion(wall, TX, RX, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
+                    P_tmp = reflexion(wall, Pr, P_i, reflexion_max, reflex_i-1, selected_wall);
                     if size(P_tmp,2) > 1
                        P = P_tmp;
                     end

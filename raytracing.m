@@ -1,4 +1,4 @@
-function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin) %#codegen
+function P_reflexion = raytracing(wall, init_point, reflexion_max, varargin) %#codegen
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
     
@@ -6,14 +6,14 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
     if reflexion_i == 1;
         P_reflexion = zeros(reflexion_max,4);
     end
-    TX = init_point;
+    TX_tmp = init_point;
     Pi = 0;
     wall_pos = 0;
     if ~isempty(varargin)
         reflexion_i = varargin{1};
         Pi = varargin{2};
         wall_pos = varargin{3};
-        TX = varargin{4};
+        TX_tmp = varargin{4};
         P_reflexion = varargin{5};
     end
     
@@ -41,7 +41,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                     wall_pos_tmp = vertcat(wall_pos,i);
                 end
                 
-                Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
+                Pr = reflexion(wall, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 %S'il y a eu réflexion
                 if size(Pr,2) > 1
                     if P_reflexion == 0
@@ -52,7 +52,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 end
                 
                 if reflexion_i < reflexion_max
-                   P_reflexion = raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX, P_reflexion);
+                   P_reflexion = raytracing(wall, [Pi_x Pi_y], reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX_tmp, P_reflexion);
                 end
                 
             %Si le mur est à droite du point initial
@@ -71,7 +71,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                     wall_pos_tmp = vertcat(wall_pos,i);
                 end
                 
-                Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
+                Pr = reflexion(wall, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 if size(Pr,2) > 1
                     if P_reflexion == 0
                         P_reflexion(1,:) = Pr;
@@ -81,7 +81,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 end
                 
                 if reflexion_i < reflexion_max
-                    P_reflexion = raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX, P_reflexion);
+                    P_reflexion = raytracing(wall, [Pi_x Pi_y], reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX_tmp, P_reflexion);
                 end
             end
         
@@ -105,7 +105,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                     wall_pos_tmp = vertcat(wall_pos,i);
                 end
                 
-                Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
+                Pr = reflexion(wall, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 if size(Pr,2) > 1
                     if P_reflexion == 0
                         P_reflexion(1,:) = Pr;
@@ -115,7 +115,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 end
                 
                 if reflexion_i < reflexion_max
-                    P_reflexion = raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX, P_reflexion);
+                    P_reflexion = raytracing(wall, [Pi_x Pi_y], reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX_tmp, P_reflexion);
                 end
                 
             %Si le mur est en haut du point initial
@@ -134,7 +134,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                     wall_pos_tmp = vertcat(wall_pos,i);
                 end
                 
-                Pr = reflexion(wall, TX, RX, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
+                Pr = reflexion(wall, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 if size(Pr,2) > 1
                     if P_reflexion == 0
                         P_reflexion(1,:) = Pr;
@@ -144,7 +144,7 @@ function P_reflexion = raytracing(wall, init_point, RX, reflexion_max, varargin)
                 end
                 
                 if reflexion_i < reflexion_max
-                    P_reflexion = raytracing(wall, [Pi_x Pi_y], RX, reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX, P_reflexion);
+                    P_reflexion = raytracing(wall, [Pi_x Pi_y], reflexion_max, reflexion_i+1, Pi_tmp, wall_pos_tmp, TX_tmp, P_reflexion);
                 end
             end
   
