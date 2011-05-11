@@ -89,7 +89,6 @@ function Tr = transmission(wall, TX, RX, varargin)
                             %segment du mur et pas la droite formé par le mur
                             if (P_intersection(1) ~= P_tmp(1) && P_intersection(2) ~= P_tmp(2)) || (P_intersection(1) ~= P_tmp(3) && P_intersection(2) ~= P_tmp(4))
                                 if (isIntersectSegment(wall(m,1:4),P_intersection(1), P_intersection(2)) && isIntersectSegment(P_tmp,P_intersection(1), P_intersection(2)))
-                                    %plot(P_intersection(1),P_intersection(2),'.k', 'MarkerSize', 10);
 
                                     theta_i = angleBetweenTwoLines(wall(m,1:4),P_tmp);
 
