@@ -1,10 +1,10 @@
 function P_reflexion = raytracing(wall, init_point, reflexion_max, varargin) %#codegen
 %UNTITLED3 Summary of this function goes here
 %   Detailed explanation goes here
-    
+
     reflexion_i = 1;
     if reflexion_i == 1;
-        P_reflexion = zeros(reflexion_max,4);
+        P_reflexion = zeros(reflexion_max,5);
     end
     TX_tmp = init_point;
     Pi = 0;
@@ -31,6 +31,7 @@ function P_reflexion = raytracing(wall, init_point, reflexion_max, varargin) %#c
                 Pi_x = init_point(1) - 2*abs(init_point(1) - wall(i,1));
                 Pi_y = init_point(2);
                 
+                
                 %Si ce n'est pas le premier point image on le concate avec
                 %le matrice des points images
                 if reflexion_i == 1
@@ -44,6 +45,7 @@ function P_reflexion = raytracing(wall, init_point, reflexion_max, varargin) %#c
                 Pr = reflexion(wall, 0, Pi_tmp, reflexion_i, reflexion_i, wall_pos_tmp);
                 %S'il y a eu réflexion
                 if size(Pr,2) > 1
+                                        
                     if P_reflexion == 0
                         P_reflexion(1,:) = Pr;
                     else

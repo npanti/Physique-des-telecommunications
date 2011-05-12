@@ -1,7 +1,7 @@
 clear;
 clc;
 
-global beta lambda f Z0 G_TX P_TX h_e Ra TX RX eps0 mhu0 omega;
+global beta lambda f Z0 G_TX P_TX h_e Ra TX RX eps0 mhu0 omega d_reflect reflecteur Pr;
 
 %Norme
 P_TX_dbm = 12;
@@ -15,24 +15,30 @@ Ra = 75;
 eps0 = 8.854187e-12;
 mhu0 = pi*4e-7;
 omega = 2*pi*f;
+d_reflect = lambda/4;
 
 %impédance du vide
 Z0 = 120*pi;
 
 %Récepteur et émeteur [x y]
-TX = [2 2];
+TX = [30 0];
+
+%Reflecteur
+%vecteur directeur du reflecteur
+%reflecteur = [0 0 1 1];
 
 G_TX = 1.6524;
 
-reflexion_max = 2;
+reflexion_max = 1;
 
 %Pièce simple (carrée)
-x=26;
-y=22;
+x=30;
+y=30;
 mur1 = [0 0 0 10 0.10 5 0.1; 0 10 10 10 0.10 5 0.1; 10 10 10 0 0.10 5 0.1; 10 0 0 0 0.10 5 0.1];
+mur = [0 0 0 30 0.10 5 0.1; 0 30 30 30 0.10 5 0.1; 30 30 30 0 0.10 5 0.1; 30 0 0 0 0.10 5 0.1];
 mur2 = [0 0 0 10 0.10 5 0.1; 0 10 20 10 0.10 5 0.1; 20 10 20 0 0.10 5 0.1; 20 0 0 0 0.10 5 0.1; 10 0 10 4 0.10 5 0.1; 10 10 10 6 0.10 5 0.1; 5 5 15 5 0.10 5 0.1];
 mur3 = [0 0 0 10 0.10 5 0.1; 0 10 20 10 0.10 5 0.1; 20 10 20 0 0.10 5 0.1; 20 0 0 0 0.10 5 0.1; 10 0 10 4 0.10 5 0.1; 10 10 10 6 0.10 5 0.1] ;
-mur = [
+mur4 = [
     %Coordonée du mur   |epaiseur|eps_r|sigma  
      0     0    26     0    0.1    5    0.1
     26     0    26    22    0.1    5    0.1
@@ -108,7 +114,7 @@ tic();
 %Lancement du programme de raytracing
 
 db_power = zeros(x,y);
-bitrate_mb = zeros(x,y);
+db_power_reflect = zeros(x,y);
 
 end_time = 0;
 total_time = 0;
@@ -122,28 +128,31 @@ for i=0.5:+1:x
        fprintf('Avancement : %.2f %% \nTemps estimé: %.2f minutes',((i+0.5-1)*y+j+0.5)/(x*y)*100, (moyenne*x*y-total_time)/60);
 
        RX = [i j];
-       ray = tic();
-       Pr = raytracing(mur,TX,reflexion_max);
-       fprintf('\n Raytracing %f', toc(ray));
-       trans = tic();
-       Tr = transmission(mur,TX,RX,Pr);
-       fprintf('\n transmission %f', toc(trans));
-       coef = tic();
-       R = coef_reflection(mur,Pr);
-       fprintf('\n coef_reflexion %f', toc(coef));
        
-       champ = tic();
-       E_tot = electric_field(Pr,Tr,R,TX,RX);
-       fprintf('\n Champs tot %f', toc(champ));
+       Pr = raytracing(mur,TX,reflexion_max);
+       Tr = transmission(mur,TX,RX,Pr);
+       R = coef_reflection(mur,Pr);
+       
+       %Calcul de l'angle entre le premier rayon et le reflecteur
+       
+       E_tot = electric_field(Pr,Tr,R);
+       
+       %E_tot_reflect = electric_field_reflect(E_tot,Pr);
+       
        
        %Chemin direct
        Tr_direct = transmission(mur,TX,RX);
-       E_direct = electric_field(0,Tr_direct,0,TX,RX);
+       E_direct = electric_field(0,Tr_direct,0);
+       
+       %E_direct_reflect = electric_field_reflect(E_direct,0);
        
        E_tot(size(E_tot,1)+1) = E_direct;
-        
+       %E_tot_reflect = [E_tot_reflect;E_direct_reflect];
+       
        
        db_power(i+0.5,j+0.5) = signal_strength(E_tot);
+       
+       %db_power_reflect(i+0.5,j+0.5) = signal_strength(E_tot_reflect);
        
        end_time = toc(ticID);
        total_time = total_time + end_time;
@@ -160,6 +169,7 @@ bitrate_mb = bitrate(db_power);
 fprintf('\n');
 toc();
 gui_project_ZC(mur,db_power,TX);
+%gui_project_ZC(mur,db_power_reflect,TX);
 gui_project_DR(mur,bitrate_mb,TX);
 %load handel;
 %sound(y,Fs);
