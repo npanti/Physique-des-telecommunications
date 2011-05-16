@@ -2,7 +2,7 @@ function P = reflexion(wall, Pr, P_i, reflexion_max, reflex_i, selected_wall)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
-    global RX;
+    global RX TX;
 
     P = 0;
     

@@ -20,19 +20,34 @@ omega = 2*pi*f;
 Z0 = 120*pi;
 
 %Récepteur et émeteur [x y]
-TX = [2 2];
+RX = [1 1];
 
 G_TX = 1.6524;
 
-reflexion_max = 2;
+reflexion_max = 1;
 
 %Pièce simple (carrée)
-x=26;
-y=22;
-mur1 = [0 0 0 10 0.10 5 0.1; 0 10 10 10 0.10 5 0.1; 10 10 10 0 0.10 5 0.1; 10 0 0 0 0.10 5 0.1];
+x=30;
+y=10;
+mur = [0 0 30 0 0.10 5 0.1; 30 0 30 10 0.10 5 0.1; 30 10 0 10 0.10 5 0.1; 0 10 0 0 0.10 5 0.1; 4 0 4 4 0.10 5 0.1];
 mur2 = [0 0 0 10 0.10 5 0.1; 0 10 20 10 0.10 5 0.1; 20 10 20 0 0.10 5 0.1; 20 0 0 0 0.10 5 0.1; 10 0 10 4 0.10 5 0.1; 10 10 10 6 0.10 5 0.1; 5 5 15 5 0.10 5 0.1];
 mur3 = [0 0 0 10 0.10 5 0.1; 0 10 20 10 0.10 5 0.1; 20 10 20 0 0.10 5 0.1; 20 0 0 0 0.10 5 0.1; 10 0 10 4 0.10 5 0.1; 10 10 10 6 0.10 5 0.1] ;
-mur = [
+mur4 = [0 0 8 0 0.15 5 0.1
+       0 0 0 33 0.15 5 0.1
+       8 0 8 33 0.15 5 0.1
+       0 33 8 33 0.15 5 0.1
+       0 18 6 18 0.15 5 0.1
+       0 22 6 22 0.15 5 0.1
+       6 18 6 20 0.15 5 0.1
+       6 21 6 22 0.15 5 0.1
+       6 33 6 22 0.15 5 0.1
+       6 18 6 0 0.15 5 0.1
+       6 26 0 26 0.15 5 0.1
+       6 9 0 9 0.15 5 0.1
+       3 22 3 20 0.02 5 0.1
+       3 20 5 20 0.02 5 0.1
+       5 20 5 22 0.02 5 0.1];
+mur5 = [
     %Coordonée du mur   |epaiseur|eps_r|sigma  
      0     0    26     0    0.1    5    0.1
     26     0    26    22    0.1    5    0.1
@@ -106,6 +121,12 @@ mur = [
 tic();
 
 %Lancement du programme de raytracing
+TX = [1 1];
+
+% hold on;
+% for z=1:+1:size(mur,1)
+%     plot([mur(z,1) mur(z,3)],[mur(z,2) mur(z,4)],'-k');
+% end
 
 db_power = zeros(x,y);
 bitrate_mb = zeros(x,y);
@@ -118,23 +139,22 @@ for i=0.5:+1:x
    for j=0.5:+1:y
        
        ticID = tic();
-       clc;
-       fprintf('Avancement : %.2f %% \nTemps estimé: %.2f minutes',((i+0.5-1)*y+j+0.5)/(x*y)*100, (moyenne*x*y-total_time)/60);
+       %clc;
+       fprintf('Avancement : %.2f %% \nTemps estimé: %.1f minutes',((i+0.5-1)*y+j+0.5)/(x*y)*100, (moyenne*x*y-total_time)/60);
 
        RX = [i j];
-       ray = tic();
        Pr = raytracing(mur,TX,reflexion_max);
-       fprintf('\n Raytracing %f', toc(ray));
-       trans = tic();
        Tr = transmission(mur,TX,RX,Pr);
-       fprintf('\n transmission %f', toc(trans));
-       coef = tic();
        R = coef_reflection(mur,Pr);
-       fprintf('\n coef_reflexion %f', toc(coef));
-       
-       champ = tic();
+
        E_tot = electric_field(Pr,Tr,R,TX,RX);
-       fprintf('\n Champs tot %f', toc(champ));
+       
+       %Diffraction
+       diffract = diffraction(mur,RX);
+           Tr = transmission(mur,TX,RX,diffract);
+           D = coef_diffraction(diffract);
+           E_diffract = electric_field(diffract,Tr,ones(size(D,3)),TX,RX,D);
+           E_tot = [E_tot; E_diffract];
        
        %Chemin direct
        Tr_direct = transmission(mur,TX,RX);
@@ -142,8 +162,7 @@ for i=0.5:+1:x
        
        E_tot(size(E_tot,1)+1) = E_direct;
         
-       
-       db_power(i+0.5,j+0.5) = signal_strength(E_tot);
+       db_power(i+0.5,j+0.5) = signal_strength(E_diffract);
        
        end_time = toc(ticID);
        total_time = total_time + end_time;
@@ -152,8 +171,88 @@ for i=0.5:+1:x
    end
 end
 
+%plot([TX(1) RX(1)],[TX(2) RX(2)],'.r');
+
+% TX = [23 21];
+% db_power2 = zeros(x,y);
+% end_time = 0;
+% total_time = 0;
+% moyenne = 0;
+% 
+% for i=0.5:+1:x
+%    for j=0.5:+1:y
+%        
+%        ticID = tic();
+%        clc;
+%        fprintf('Avancement : %.2f %% \nTemps estimé: %.2f minutes',((i+0.5-1)*y+j+0.5)/(x*y)*100, (moyenne*x*y-total_time)/60);
+% 
+%        RX = [i j];
+%        ray = tic();
+%        Pr = raytracing(mur,TX,reflexion_max);
+%        Tr = transmission(mur,TX,RX,Pr);
+%        R = coef_reflection(mur,Pr);
+% 
+%        E_tot = electric_field(Pr,Tr,R,TX,RX);
+%        
+%        %Chemin direct
+%        Tr_direct = transmission(mur,TX,RX);
+%        E_direct = electric_field(0,Tr_direct,0,TX,RX);
+%        
+%        E_tot(size(E_tot,1)+1) = E_direct;
+%         
+%        
+%        db_power2(i+0.5,j+0.5) = signal_strength(E_tot);
+%        
+%        end_time = toc(ticID);
+%        total_time = total_time + end_time;
+%        moyenne = total_time/((i+0.5-1)*y+j+0.5);
+%        
+%    end
+% end
+% 
+% TX = [20 9];
+% db_power3 = zeros(x,y);
+% end_time = 0;
+% total_time = 0;
+% moyenne = 0;
+% 
+% for i=0.5:+1:x
+%    for j=0.5:+1:y
+%        
+%        ticID = tic();
+%        clc;
+%        fprintf('Avancement : %.2f %% \nTemps estimé: %.2f minutes',((i+0.5-1)*y+j+0.5)/(x*y)*100, (moyenne*x*y-total_time)/60);
+% 
+%        RX = [i j];
+%        ray = tic();
+%        Pr = raytracing(mur,TX,reflexion_max);
+%        Tr = transmission(mur,TX,RX,Pr);
+%        R = coef_reflection(mur,Pr);
+% 
+%        E_tot = electric_field(Pr,Tr,R,TX,RX);
+%        
+%        %Chemin direct
+%        Tr_direct = transmission(mur,TX,RX);
+%        E_direct = electric_field(0,Tr_direct,0,TX,RX);
+%        
+%        E_tot(size(E_tot,1)+1) = E_direct;
+%         
+%        
+%        db_power3(i+0.5,j+0.5) = signal_strength(E_tot);
+%        
+%        end_time = toc(ticID);
+%        total_time = total_time + end_time;
+%        moyenne = total_time/((i+0.5-1)*y+j+0.5);
+%        
+%    end
+% end
+% 
+% db_power_tot = totalStrength(db_power,db_power2,db_power3);
+
 %On calcul le debit binaire
 bitrate_mb = bitrate(db_power);
+
+
 
 %diffractionPoints(mur,TX,RX);
 

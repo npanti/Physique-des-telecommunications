@@ -91,6 +91,7 @@ function Tr = transmission(wall, TX, RX, varargin)
                                 if (isIntersectSegment(wall(m,1:4),P_intersection(1), P_intersection(2)) && isIntersectSegment(P_tmp,P_intersection(1), P_intersection(2)))
 
                                     theta_i = angleBetweenTwoLines(wall(m,1:4),P_tmp);
+                                   
 
                                     Tr(i) = Tr(i)*coef_transmission(wall(m,5),wall(m,6), wall(m,7),theta_i);
 
